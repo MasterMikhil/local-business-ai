@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 
-from logging import addLevelName, getLogger, Logger, Formatter, StreamHandler, root, NOTSET, DEBUG, INFO, WARNING, basicConfig, error as log_error, info as log_info, warning as log_warning, critical as log_critical, debug as log_debug
+from logging import error as log_error, info as log_info, warning as log_warning, critical as log_critical, debug as log_debug
 from coloredlogs import install as cloginstall
 from verboselogs import VerboseLogger, VERBOSE
 
@@ -14,10 +14,10 @@ CHATBOT_API_URL = "https://chatbot-model.cognitiveservices.azure.com/language/:q
 
 LANGUGAE_API_KEY = "19O3s8nmaOUhKCoskZ3UEYMZvVZxdqpYqogJSz3y3A1ZYQJ1qkoSJQQJ99BAACYeBjFXJ3w3AAAaACOGsRzF"
 LANGUGAE_API_URL = "https://chatbot-model.cognitiveservices.azure.com/"
-logger = VerboseLogger('my_logger')
-cloginstall(level=VERBOSE, fmt='[%(asctime)s] | %(levelname)-6s | %(message)s')
 
 app = Flask(__name__, static_folder='static')
+logger = VerboseLogger('my_logger')
+cloginstall(level=VERBOSE, fmt='[%(asctime)s] | %(levelname)-6s | %(message)s')
 
 class chatbot():
     def __init__(self, API_KEY, API_URL):
@@ -108,7 +108,4 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    sentiments = sentiment_analysis(LANGUGAE_API_KEY, LANGUGAE_API_URL)
-    response = sentiments.analysis("YOU are so lame!")
-    print(response)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True)
