@@ -1,0 +1,6 @@
+flask
+requests
+azure-ai-textanalytics
+logging
+coloredlogs
+verboselogs
