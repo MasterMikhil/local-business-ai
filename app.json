@@ -1,7 +1,7 @@
 {
     "name": "Local Business AI",
     "description": "A template for getting started with the popular AI Business.",
-    "repository": "https://github.com/Master-Mind-007/Jackett-Heroku",
+    "repository": "https://github.com/MasterMikhil/local-business-ai",
     "stack": "container",
     "env": {
       "PORT": {
