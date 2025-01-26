@@ -8,6 +8,8 @@ from azure.core.credentials import AzureKeyCredential
 from logging import error as log_error, info as log_info, warning as log_warning, critical as log_critical, debug as log_debug
 from coloredlogs import install as cloginstall
 from verboselogs import VerboseLogger, VERBOSE
+from dotenv import load_dotenv
+from os import environ
 
 CHATBOT_API_KEY = "BwYLppC6tQ7t2fegk5xi57ZncG4pRPYlNVHqfX20pkqEj4JYI6aqJQQJ99BAACYeBjFXJ3w3AAAaACOGj3Fi"
 CHATBOT_API_URL = "https://chatbot-model.cognitiveservices.azure.com/language/:query-knowledgebases?projectName=local-business-ai&api-version=2021-10-01&deploymentName=production"
@@ -18,6 +20,7 @@ LANGUGAE_API_URL = "https://chatbot-model.cognitiveservices.azure.com/"
 app = Flask(__name__, static_folder='static')
 logger = VerboseLogger('my_logger')
 cloginstall(level=VERBOSE, fmt='[%(asctime)s] | %(levelname)-6s | %(message)s')
+load_dotenv()
 
 class chatbot():
     def __init__(self, API_KEY, API_URL):
@@ -110,4 +113,3 @@ def page_not_found(e):
 if __name__ == '__main__':
     PORT = environ.get('PORT', None)
     app.run(debug=True, port=PORT)
-    

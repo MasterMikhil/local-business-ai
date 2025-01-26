@@ -4,3 +4,4 @@ azure-ai-textanalytics
 logging
 coloredlogs
 verboselogs
+python-dotenv
