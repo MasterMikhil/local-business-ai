@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Business</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        #chat-popup {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #ff4d67;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+
+        #chat-popup:hover {
+            background-color: #e63e59;
+        }
+
+        #chat-window {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 300px;
+            max-height: 400px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chat-header {
+            background-color: #ff4d67;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #chat-close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.983);
+        }
+    </style>
+    <script>
+        function toggleChat() {
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.style.display = chatWindow.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function handleChatSubmit(event) {
+            event.preventDefault();
+            const userMessage = document.getElementById('user-message').value;
+            if (!userMessage) return;
+
+            const chatContainer = document.getElementById('chat-container');
+            const userBubble = `<div class='self-end bg-blue-500 text-white p-3 rounded-xl mb-2 max-w-xs'>${userMessage}</div>`;
+            chatContainer.innerHTML += userBubble;
+
+            try {
+                const response = await axios.post('/chat', { message: userMessage });
+                const aiReply = `<div class='self-start bg-gray-200 p-3 rounded-xl mb-2 max-w-xs'>${response.data.reply}</div>`;
+                chatContainer.innerHTML += aiReply;
+            } catch (error) {
+                const errorBubble = `<div class='self-start bg-red-500 text-white p-3 rounded-xl mb-2 max-w-xs'>Sorry, something went wrong.</div>`;
+                chatContainer.innerHTML += errorBubble;
+            }
+
+            document.getElementById('user-message').value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Welcome to Our Local Business</h1>
+            <p class="text-gray-600">Your satisfaction is our priority. How can we help you today?</p>
+        </header>
+
+        <main class="bg-white rounded-xl shadow-lg p-6">
+            <section id="about" class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">About Us</h2>
+                <p class="text-gray-600">We are committed to providing exceptional services to our community. Whether you need assistance or have questions, we are here to help.</p>
+            </section>
+
+            <section id="services" class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Our Services</h2>
+                <ul class="list-disc pl-6 text-gray-600">
+                    <li>Quality products tailored to your needs</li>
+                    <li>Personalized customer support</li>
+                    <li>Convenient and efficient solutions</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer class="text-center mt-6 text-gray-500">
+            <p>&copy; 2025 Local Business. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- Chat Popup and Window -->
+    <div id="chat-popup" onclick="toggleChat()">
+        💬
+    </div>
+
+    <div id="chat-window">
+        <div id="chat-header">
+            Virtual Assistant
+            <span id="chat-close" onclick="toggleChat()">✖</span>
+        </div>
+        <div id="chat-container" class="w-full h-72 overflow-y-auto bg-gray-50 p-4 flex flex-col gap-2"></div>
+        <form class="mt-auto flex" onsubmit="handleChatSubmit(event)">
+            <input id="user-message" type="text" placeholder="Type your message here..." class="flex-1 p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            <button type="submit" class="p-3 bg-blue-500 text-white hover:bg-blue-600">Send</button>
+        </form>
+    </div>
+    <!-- Chat Popup and Window - END -->
+</body>
+</html>

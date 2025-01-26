@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html>
+    
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width-device-width, initial-scale=1.0">
+        <title>Redstore | Ecommerce website</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <!--added a cdn link by searching font awesome4 cdn and getting this link from https://www.bootstrapcdn.com/fontawesome/ this url*/-->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <style>
+            #chat-popup {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background-color: #ff4d67;
+                color: white;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.5);
+                cursor: pointer;
+            }
+    
+            #chat-popup:hover {
+                background-color: #e63e59;
+            }
+    
+            #chat-window {
+                display: none;
+                position: fixed;
+                bottom: 100px;
+                right: 20px;
+                width: 300px;
+                max-height: 400px;
+                background-color: white;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 10px rgba(0, 0, 0, 0.5);
+                border-radius: 10px;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+    
+            #chat-header {
+                background-color: #ff4d67;
+                color: white;
+                padding: 10px;
+                text-align: center;
+                font-weight: bold;
+            }
+    
+            #chat-close {
+                position: absolute;
+                top: 5px;
+                right: 10px;
+                cursor: pointer;
+                font-size: 14px;
+                color: rgba(0, 0, 0, 0.983);
+            }
+        </style>
+        <script>
+            function toggleChat() {
+                const chatWindow = document.getElementById('chat-window');
+                chatWindow.style.display = chatWindow.style.display === 'none' ? 'block' : 'none';
+            }
+    
+            async function handleChatSubmit(event) {
+                event.preventDefault();
+                const userMessage = document.getElementById('user-message').value;
+                if (!userMessage) return;
+    
+                const chatContainer = document.getElementById('chat-container');
+                const userBubble = `<div class='self-end bg-blue-500 text-white p-3 rounded-xl mb-2 max-w-xs'>${userMessage}</div>`;
+                chatContainer.innerHTML += userBubble;
+    
+                try {
+                    const response = await axios.post('/api/chat', { query: userMessage });
+                    const aiReply = `<div class='self-start bg-gray-200 p-3 rounded-xl mb-2 max-w-xs'>${response.data.reply}</div>`;
+                    chatContainer.innerHTML += aiReply;
+                } catch (error) {
+                    const errorBubble = `<div class='self-start bg-red-500 text-white p-3 rounded-xl mb-2 max-w-xs'>Sorry, something went wrong.</div>`;
+                    chatContainer.innerHTML += errorBubble;
+                }
+    
+                document.getElementById('user-message').value = '';
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        </script>
+    </head>
+    <body>
+        <div class ="header">
+        <div class="container">
+            <div class="navbar">
+                <div class="logo">
+                    <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo.png') }}" width="125px"></a>
+                </div>
+                <nav>
+                    <ul id="MenuItems">
+                        <li><a href="{{ url_for('index') }}">Home</a></li>
+                         <li><a href="{{ url_for('products') }}">Products</a></li>
+                         <li><a href="">About</a></li>
+                         <li><a href="">Contact</a></li>
+                         <li><a href="{{ url_for('accounts') }}">Account</a></li>
+
+                    </ul>
+                </nav>
+                <a href="{{ url_for('cart') }}"><img src="{{ url_for('static', filename='images/cart.png') }}" width="30px" height="30px"></a>
+                <img src="{{ url_for('static', filename='images/menu.png') }}" class="menu-icon" onClick="menutoggle()" >
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <h1>Give your Workout <br>A New Style!</h1>
+                    <p>Success isn't always about greatness. It's about consistency. Consistent<br>hard work gains success. Greatness will come.</p>
+                    <a href="{{ url_for('products') }}" class="btn">Explore Now &#8594;</a>
+                </div>
+                <div class="col-2">
+                    <img src="{{ url_for('static', filename='images/image1.png') }}">
+                </div>
+            </div>
+        </div>
+    </div>
+        
+        <!------------------------------ featured categories------------------------------>
+        <div class="categories">
+            <div class="small-container">
+                <div class="row">
+                <div class="col-3">
+                    <img src="{{ url_for('static', filename='images/category-1.jpg') }}">
+                </div>
+                <div class="col-3">
+                    <img src="{{ url_for('static', filename='images/category-2.jpg') }}">
+                </div>
+                <div class="col-3">
+                    <img src="{{ url_for('static', filename='images/category-3 (2).jpg') }}">
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        <!------------------------------ featured Products------------------------------>
+        <div class="small-container">
+            <h2 class="title" >Featured Products</h2>
+                <div class="row">
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-11.jpg') }}"></a>
+                        <a href="{{ url_for('products_details') }}"><h4>Downshifter Sports Shoes</h4></a>
+                        <div class="rating">
+                            <!--(before this added awesome4 cdn font link to the head)added a cdn link by searching font awesome4 icon and from the site  search the star entering the first option and getting a link of this fa-star*-->
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-half-o" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$50.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-2.jpg') }}"></a>
+                        <h4>Lace-Up Running Shoes</h4>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-half-o" ></i>
+                        </div>
+                        <p>$35.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-3.jpg') }}"></a>
+                        <h4>Lace Fastening Shoes</h4>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$15.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-10.jpg') }}"></a>
+                        <h4>Flat Lace-Fastening Shoes</h4>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$48.00</p>
+                    </div>  
+                </div>
+            
+            
+             <h2 class="title" >Latest Products</h2>
+                <div class="row">
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-5.jpg') }}"></a>
+                        <h4>Flat Heel gray hoes</h4>
+                        <div class="rating">
+                            <!--(before this added awesome4 cdn font link to the head)added a cdn link by searching font awesome4 icon and from the site  search the star entering the first option and getting a link of this fa-star*-->
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-half-o" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$50.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-3.jpg') }}"></a>
+                        <h4>Lace-Fastening black Shoes</h4>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-half-o" ></i>
+                        </div>
+                        <p>$21.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-7.jpg') }}"></a>
+                        <h4>HRX Men's cotton socks</h4>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$09.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-2.jpg') }}"></a>
+                        <h4>Lace-Up Running Shoes</h4>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$35.00</p>
+                    </div>  
+                </div>
+            <!--new row for the latest product-->
+                <div class="row">
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-7.jpg') }}"></a>
+                        <h4>HRX cotton socks</h4>
+                        <div class="rating">
+                            <!--(before this added awesome4 cdn font link to the head)added a cdn link by searching font awesome4 icon and from the site  search the star entering the first option and getting a link of this fa-star*-->
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-half-o" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$10.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-10.jpg') }}"></a>
+                        <h4>Flat Lace-Fastening Shoes</h4>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-half-o" ></i>
+                        </div>
+                        <p>$48.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-11.jpg') }}"></a>
+                        <h4>Loafers Men (Gray)</h4>
+                        <div class="rating">
+                            <i class="fa fa-star-o" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$15.00</p>
+                    </div>
+                    <div class="col-4">
+                        <a href="{{ url_for('products_details') }}"><img src="{{ url_for('static', filename='images/product-12.jpg') }}"></a>
+                        <h4>Lace-Fastening white Shoes</h4>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <p>$21.00</p>
+                    </div>  
+                </div>
+            </div>
+        
+        <!--------------------------`   offer   --------------------------------->
+        <div class="offer">
+            <div class="small-container">
+                <div class="row">
+                    <div class="col-2">
+                        <img src="{{ url_for('static', filename='images/image1.png') }}" class="offer-img">
+                    </div>
+                    <div class="col-2">
+                        <p>Exclusively Available on RedStore</p>
+                        <h1>Sports Shoes</h1>
+                        <small> Buy latest collections of sports shoes online on Redstore at best prices from top brands such as Adidas, Nike, Puma, Asics, and Sparx at your leisure at best prices. </small><br>
+                        <a href="{{ url_for('products') }}" class="btn">Buy Now &#8594;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <!------------------------------Testimonial---------------------------------->
+        <div class="testimonial">
+            <div class="small-container">
+                <div class="row">
+                    <div class="col-3">
+                        <i class="fa fa-quote-left" ></i>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
+                        <div class="rating"> 
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <img src="{{ url_for('static', filename='images/user-1.png') }}">
+                        <h3>Sean Parkar</h3>
+                    </div>
+                    <div class="col-3">
+                        <i class="fa fa-quote-left" ></i>
+                        <p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.</p>
+                        <div class="rating">
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <img src="{{ url_for('static', filename='images/user-2.png') }}">
+                        <h3>Mike Smith</h3>
+                    </div>
+                    <div class="col-3">
+                        <i class="fa fa-quote-left" ></i>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. </p>
+                        <div class="rating"> 
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star" ></i>
+                            <i class="fa fa-star-o" ></i>
+                        </div>
+                        <img src="{{ url_for('static', filename='images/user-3.png') }}">
+                        <h3>Mabel Joe</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!----------------------------------Brands------------------------------------>
+        <div class="brands">
+            <div class="small-container">
+                <div class="row">
+                    <div class="col-5">
+                        <img src="{{ url_for('static', filename='images/logo-godrej.png') }}" alt="">
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ url_for('static', filename='images/logo-oppo.png') }}" alt="">
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ url_for('static', filename='images/logo-coca-cola.png') }}" alt="">
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ url_for('static', filename='images/logo-paypal.png') }}" alt="">
+                    </div>
+                    <div class="col-5">
+                        <img src="{{ url_for('static', filename='images/logo-philips.png') }}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <!----------------------------------footer------------------------------------->
+        <div class ="footer">
+        <div class="container">
+            
+            <div class="row">
+                <div class="footer-col-1">
+                    <h3>Download Our App</h3>
+                    <p>Download App for Android and ios mobile phone.</p>
+                    <div class="app-logo">
+                        <img src="{{ url_for('static', filename='images/play-store.png') }}" alt="">
+                        <img src="{{ url_for('static', filename='images/app-store.png') }}" alt="">
+                    </div>
+                </div>
+                <div class="footer-col-2">
+                    <img src="{{ url_for('static', filename='images/logo-white.png') }}">
+                    <p>Our Purpose Is To Sustainably Make the Pleasure and Benefits of Sports Accessible to the Many.</p>
+                </div>
+                <div class="footer-col-3">
+                    <h3>Useful Links</h3>
+                   <ul>
+                       <li>Coupons</li>
+                       <li>Blog Post</li>
+                       <li>Return Policy</li>
+                       <li>Join Affiliate</li>
+                    </ul>
+                </div>
+                <div class="footer-col-4">
+                    <h3>Follow us</h3>
+                   <ul>
+                       <li>Facebook</li>
+                       <li>Twitter</li>
+                       <li>Instagram</li>
+                       <li>Youtube</li>
+                    </ul>
+                </div>
+                
+            </div>
+            
+            <hr><!--horizontal line-->
+            <p class="copyright">Copyright 2021 - Apurba Kr. Pramanik</p>
+            
+        </div>
+    </div>
+
+    <!-- Chat Popup and Window -->
+    <div id="chat-popup" onclick="toggleChat()">
+        💬
+    </div>
+
+    <div id="chat-window">
+        <div id="chat-header">
+            Virtual Assistant
+            <span id="chat-close" onclick="toggleChat()">✖</span>
+        </div>
+        <div id="chat-container" class="w-full h-72 overflow-y-auto bg-gray-50 p-4 flex flex-col gap-2"></div>
+        <form class="mt-auto flex" onsubmit="handleChatSubmit(event)">
+            <input id="user-message" type="text" placeholder="Type your message here..." class="flex-1 p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            <button type="submit" class="p-3 bg-blue-500 text-white hover:bg-blue-600">Send</button>
+        </form>
+    </div>
+    <!-- Chat Popup and Window - END -->
+        
+        <!-----------------------------------js for toggle menu----------------------------------------------->
+        <script>
+            var menuItems=document.getElementById("MenuItems");
+            
+            MenuItems.style.maxHeight="0px";
+            function menutoggle(){
+                if(MenuItems.style.maxHeight == "0px"){
+                    MenuItems.style.maxHeight="200px";
+                }
+                else{
+                    MenuItems.style.maxHeight="0px";
+                }
+            }
+        </script>
+    </body>
+</html>
